@@ -1,4 +1,6 @@
-﻿using DataBase.Model;
+﻿#nullable disable
+using DataBase.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,35 +11,33 @@ namespace DataBase.Common
 {
     public class OwnerRepository : IRepository<Owner>
     {
-        
+        public DBContext Context { get; init; }
+
+        public OwnerRepository(DBContext context) => Context = context;
 
         public void Create(Owner Item)
         {
-            using var db = new DBContext();
-            db.Add(Item);
-            db.SaveChanges();
+            Context.Add(Item);
+            Context.SaveChanges();
         }
 
         public void Delete(int id)
         {
-            using var db = new DBContext();
-            db.Remove(GetItem(id));
-            db.SaveChanges();
+            Context.Remove(GetItem(id));
+            Context.SaveChanges();
         }
 
         public Owner GetItem(int id) => GetItems().SingleOrDefault(p => p.Id == id);
 
         public IEnumerable<Owner> GetItems()
         {
-            using var db = new DBContext();
-            return db.Owners;
+            return Context.Owners;
         }
 
         public void Update(Owner Item)
         {
-            using var db = new DBContext();
-            db.Update(Item);
-            db.SaveChanges();
+            Context.Update(Item);
+            Context.SaveChanges();
         }
     }
 }

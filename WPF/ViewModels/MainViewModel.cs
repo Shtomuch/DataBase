@@ -12,12 +12,15 @@ namespace WPF.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        //public SectionsViewModel SectionsViewModel { get; } = new();
+        public DBContext Context { get; } = new();
+
+        public OwnerViewModel Owner { get; }
 
         public MainViewModel()
         {
-            using var db = new DBContext();
-            db.Database.Migrate();
+            Context.Database.Migrate();
+
+            Owner = new(Context);
         }
 
         #region PropertyChanged

@@ -5,9 +5,175 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:WPF"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vms="clr-namespace:WPF.ViewModels"
     Title="Розважальні центри України"
-    Width="800"
-    Height="450"
+    Width="600"
+    Height="400"
+    MinWidth="350"
+    MinHeight="350"
     mc:Ignorable="d">
-    <Grid />
+
+    <Window.Resources>
+        <vms:MainViewModel x:Key="vm" />
+        <CollectionViewSource x:Key="Items" Source="{Binding Owner.Owners, Source={StaticResource vm}}" />
+    </Window.Resources>
+
+    <Grid DataContext="{StaticResource vm}">
+        <TabControl>
+            <TabItem DataContext="{Binding Owner}" Header="Власники">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MinWidth="150" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition MinWidth="150" />
+                    </Grid.ColumnDefinitions>
+
+                    <DataGrid
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        ItemsSource="{Binding Source={StaticResource Items}}"
+                        SelectedItem="{Binding Selected, Mode=TwoWay}">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="ContextMenu">
+                                    <Setter.Value>
+                                        <ContextMenu>
+                                            <MenuItem
+                                                Command="{Binding Owner.DeleteOwner, Source={StaticResource vm}}"
+                                                CommandParameter="{Binding}"
+                                                Header="Видалити" />
+                                        </ContextMenu>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Name, Mode=TwoWay}" Header="Ім'я" />
+                            <DataGridTextColumn Binding="{Binding Surname, Mode=TwoWay}" Header="Фамілія" />
+                            <DataGridTextColumn Binding="{Binding Number, Mode=TwoWay}" Header="Номер телефону" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <GridSplitter
+                        Grid.Column="1"
+                        Width="4"
+                        HorizontalAlignment="Stretch"
+                        Background="White"
+                        ResizeDirection="Columns" />
+
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Margin="2" Text="Пошук" />
+
+                            <TextBox
+                                Grid.Column="1"
+                                Margin="2"
+                                Text="{Binding SearchStr, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock
+                                Grid.ColumnSpan="2"
+                                Margin="2,30,2,2"
+                                Text="Створення" />
+
+                            <TextBlock
+                                Grid.Row="1"
+                                Margin="2"
+                                HorizontalAlignment="Right"
+                                Text="Ім'я" />
+                            <TextBlock
+                                Grid.Row="2"
+                                Margin="2"
+                                HorizontalAlignment="Right"
+                                Text="Фамілія" />
+                            <TextBlock
+                                Grid.Row="3"
+                                Margin="2"
+                                HorizontalAlignment="Right"
+                                Text="Номер телефону" />
+
+                            <TextBox
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="2"
+                                Text="{Binding NewName, Mode=TwoWay}" />
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="2"
+                                Text="{Binding NewSurname, Mode=TwoWay}" />
+                            <TextBox
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Margin="2"
+                                Text="{Binding NewNumber, Mode=TwoWay}" />
+
+                            <Button
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                Width="70"
+                                Margin="2"
+                                HorizontalAlignment="Right"
+                                Command="{Binding AddOwner}"
+                                Content="Створити" />
+                        </Grid>
+
+                        <Grid Grid.Row="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Margin="2,30,2,2" Text="Центри, що належать обраному власнику" />
+
+                            <ListView
+                                Grid.Row="1"
+                                Margin="2"
+                                ItemsSource="{Binding Centers}">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn
+                                            Width="Auto"
+                                            DisplayMemberBinding="{Binding Title}"
+                                            Header="Назва" />
+                                        <GridViewColumn
+                                            Width="Auto"
+                                            DisplayMemberBinding="{Binding Address}"
+                                            Header="Адреса" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </Grid>
+                    </Grid>
+
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Центри" />
+        </TabControl>
+    </Grid>
 </Window>

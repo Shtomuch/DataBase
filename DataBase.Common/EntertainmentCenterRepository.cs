@@ -1,43 +1,41 @@
-﻿using DataBase.Model;
+﻿#nullable disable
+using DataBase.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataBase.Common
+namespace DataBase.Common;
+
+internal class EntertainmentCenterRepository : IRepository<EntertainmentCenter>
 {
-    internal class EntertainmentCenterRepository : IRepository<EntertainmentCenter>
+    public DBContext Context { get; init; }
+
+    public EntertainmentCenterRepository(DBContext context) => Context = context;
+
+    public void Create(EntertainmentCenter Item)
     {
-        
+        Context.Add(Item);
+        Context.SaveChanges();
+    }
 
-        public void Create(EntertainmentCenter Item)
-        {
-            using var db = new DBContext();
-            db.Add(Item);
-            db.SaveChanges();
-        }
+    public void Delete(int id)
+    {
+        Context.Remove(GetItem(id));
+        Context.SaveChanges();
+    }
 
-        public void Delete(int id)
-        {
-            using var db = new DBContext();
-            db.Remove(GetItem(id));
-            db.SaveChanges();
-        }
+    public EntertainmentCenter GetItem(int id) => GetItems().SingleOrDefault(p => p.Id == id);
 
-        public EntertainmentCenter GetItem(int id) => GetItems().SingleOrDefault(p => p.Id == id);
+    public IEnumerable<EntertainmentCenter> GetItems()
+    {
+        return Context.EntertainmentCenters;
+    }
 
-        public IEnumerable<EntertainmentCenter> GetItems()
-        {
-            using var db = new DBContext();
-            return db.EntertainmentCenters;
-        }
-
-        public void Update(EntertainmentCenter Item)
-        {
-            using var db = new DBContext();
-            db.Update(Item);
-            db.SaveChanges();
-        }
+    public void Update(EntertainmentCenter Item)
+    {
+        Context.Update(Item);
+        Context.SaveChanges();
     }
 }

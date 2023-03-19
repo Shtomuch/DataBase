@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataBase.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,8 @@ namespace DataBase.Common
 {
     public interface IRepository<T> where T : class
     {
-        
+        DBContext Context { get; }
+
         IEnumerable<T> GetItems();
 
         T GetItem(int id);
