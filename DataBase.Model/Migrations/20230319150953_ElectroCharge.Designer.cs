@@ -2,6 +2,7 @@
 using DataBase.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataBase.Model.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20230319150953_ElectroCharge")]
+    partial class ElectroCharge
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,7 +70,7 @@ namespace DataBase.Model.Migrations
                     b.ToTable("Owners");
                 });
 
-            modelBuilder.Entity("DataBase.Model.Service", b =>
+            modelBuilder.Entity("DataBase.Model.Services", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -77,11 +80,14 @@ namespace DataBase.Model.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
+                    b.Property<float>("Cost")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Descriptions")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("EntertainmentCenterId")
+                    b.Property<int>("EntertainmentCentersId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Floor")
@@ -89,7 +95,7 @@ namespace DataBase.Model.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EntertainmentCenterId");
+                    b.HasIndex("EntertainmentCentersId");
 
                     b.ToTable("Service");
                 });
@@ -105,15 +111,15 @@ namespace DataBase.Model.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("DataBase.Model.Service", b =>
+            modelBuilder.Entity("DataBase.Model.Services", b =>
                 {
-                    b.HasOne("DataBase.Model.EntertainmentCenter", "EntertainmentCenter")
+                    b.HasOne("DataBase.Model.EntertainmentCenter", "EntertainmentCenters")
                         .WithMany("Services")
-                        .HasForeignKey("EntertainmentCenterId")
+                        .HasForeignKey("EntertainmentCentersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("EntertainmentCenter");
+                    b.Navigation("EntertainmentCenters");
                 });
 
             modelBuilder.Entity("DataBase.Model.EntertainmentCenter", b =>

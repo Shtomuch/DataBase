@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,53 +10,57 @@ using System.Threading.Tasks;
 
 namespace DataBase.Model
 {
-    public class EntertainmentCenter : INotifyPropertyChanged
+    public class Service : INotifyPropertyChanged
     {
-        private string title;
-        private string address;
-        private Owner owner;
-        private bool electroCharge;
+        private string name;
+        private string description;
+        private int floor;
+        private EntertainmentCenter center;
 
         public int Id { get; set; }
-        public string Title
-        {
-            get => title;
-            set
-            {
-                title = value;
-                OnPropertyChanged();
-            }
-        }
-        public string Address
-        {
-            get => address;
-            set
-            {
-                address = value;
-                OnPropertyChanged();
-            }
-        }
-        public int OwnerId { get; set; }
-        public bool ElectroCharge
-        {
-            get => electroCharge;
-            set
-            {
-                electroCharge = value;
-                OnPropertyChanged();
-            }
-        }
-        public virtual List<Service> Services { get; set; }
 
-        [ForeignKey("OwnerId")]
-        public virtual Owner Owner
+        public string BrandName
         {
-            get => owner;
+            get => name;
             set
             {
-                owner = value;
+                name = value;
                 OnPropertyChanged();
-                OwnerId = owner.Id;
+            }
+        }
+
+        public string Description
+        {
+            get => description;
+            set
+            {
+                description = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int Floor
+        {
+            get => floor;
+            set
+            {
+                floor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int EntertainmentCenterId { get; set; }
+
+        [BackingField("center")]
+        [ForeignKey("EntertainmentCenterId")]
+        public virtual EntertainmentCenter EntertainmentCenter
+        {
+            get => center;
+            set
+            {
+                center = value;
+                OnPropertyChanged();
+                EntertainmentCenterId = center.Id;
             }
         }
 

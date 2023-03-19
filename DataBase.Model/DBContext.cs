@@ -13,7 +13,7 @@ namespace DataBase.Model
        
         public DbSet<Owner> Owners{ get; set; }
 
-        public DbSet<Services> Service { get; set; }
+        public DbSet<Service> Service { get; set; }
 
         public string DbPath => "DataBase.db";
 

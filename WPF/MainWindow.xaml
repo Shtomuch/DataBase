@@ -5,22 +5,26 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:WPF"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:p="clr-namespace:WPF"
     xmlns:vms="clr-namespace:WPF.ViewModels"
     Title="Розважальні центри України"
-    Width="600"
-    Height="400"
-    MinWidth="350"
-    MinHeight="350"
+    Width="800"
+    Height="550"
+    MinWidth="800"
+    MinHeight="550"
     mc:Ignorable="d">
 
     <Window.Resources>
         <vms:MainViewModel x:Key="vm" />
-        <CollectionViewSource x:Key="Items" Source="{Binding Owner.Owners, Source={StaticResource vm}}" />
+        <p:BindingProxy x:Key="proxy" Data="{Binding Centers, Source={StaticResource vm}}" />
+        <p:InverseBoolConverter x:Key="Inverse" />
+        <CollectionViewSource x:Key="Owners" Source="{Binding Owners.Owners, Source={StaticResource vm}}" />
+        <CollectionViewSource x:Key="Centers" Source="{Binding Centers.Centers, Source={StaticResource vm}}" />
     </Window.Resources>
 
     <Grid DataContext="{StaticResource vm}">
         <TabControl>
-            <TabItem DataContext="{Binding Owner}" Header="Власники">
+            <TabItem DataContext="{Binding Owners}" Header="Контакти">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition MinWidth="150" />
@@ -31,7 +35,7 @@
                     <DataGrid
                         AutoGenerateColumns="False"
                         CanUserAddRows="False"
-                        ItemsSource="{Binding Source={StaticResource Items}}"
+                        ItemsSource="{Binding Source={StaticResource Owners}}"
                         SelectedItem="{Binding Selected, Mode=TwoWay}">
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
@@ -39,7 +43,7 @@
                                     <Setter.Value>
                                         <ContextMenu>
                                             <MenuItem
-                                                Command="{Binding Owner.DeleteOwner, Source={StaticResource vm}}"
+                                                Command="{Binding Owners.DeleteOwner, Source={StaticResource vm}}"
                                                 CommandParameter="{Binding}"
                                                 Header="Видалити" />
                                         </ContextMenu>
@@ -173,7 +177,334 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Центри" />
+            <TabItem DataContext="{Binding Centers}" Header="Центри">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.7*" MinWidth="150" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition MinWidth="400" />
+                    </Grid.ColumnDefinitions>
+
+                    <DataGrid
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        ItemsSource="{Binding Source={StaticResource Centers}}"
+                        SelectedItem="{Binding Selected, Mode=TwoWay}">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="ContextMenu">
+                                    <Setter.Value>
+                                        <ContextMenu>
+                                            <MenuItem
+                                                Command="{Binding Centers.DeleteCenter, Source={StaticResource vm}}"
+                                                CommandParameter="{Binding}"
+                                                Header="Видалити" />
+                                        </ContextMenu>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Title, Mode=TwoWay}" Header="Назва" />
+                            <DataGridTextColumn Binding="{Binding Address, Mode=TwoWay}" Header="Адреса" />
+                            <DataGridComboBoxColumn
+                                Header="Менеджер"
+                                ItemsSource="{Binding Data.Owners, Source={StaticResource proxy}}"
+                                SelectedItemBinding="{Binding Owner, Mode=TwoWay}" />
+                            <DataGridCheckBoxColumn Binding="{Binding ElectroCharge, Mode=TwoWay}" Header="Електрична заправка" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <GridSplitter
+                        Grid.Column="1"
+                        Width="4"
+                        HorizontalAlignment="Stretch"
+                        Background="White"
+                        ResizeDirection="Columns" />
+
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Margin="2" Text="Пошук" />
+
+                            <TextBox
+                                Grid.Column="1"
+                                Margin="2"
+                                Text="{Binding SearchStr, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock
+                                Grid.ColumnSpan="2"
+                                Margin="2,30,2,2"
+                                Text="Створення" />
+
+                            <TextBlock
+                                Grid.Row="1"
+                                Margin="2"
+                                HorizontalAlignment="Right"
+                                Text="Назва" />
+                            <TextBlock
+                                Grid.Row="2"
+                                Margin="2"
+                                HorizontalAlignment="Right"
+                                Text="Адреса" />
+                            <TextBlock
+                                Grid.Row="3"
+                                Margin="2"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Text="Менеджер" />
+                            <TextBlock
+                                Grid.Row="4"
+                                Margin="2"
+                                HorizontalAlignment="Right"
+                                Text="Електрична заправка" />
+
+                            <TextBox
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="2"
+                                Text="{Binding NewTitle, Mode=TwoWay}" />
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="2"
+                                Text="{Binding NewAddress, Mode=TwoWay}" />
+                            <ComboBox
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Margin="2"
+                                ItemsSource="{Binding Owners}"
+                                SelectedIndex="0"
+                                SelectedItem="{Binding NewOwner, Mode=TwoWay}" />
+                            <ToggleButton
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                Margin="2"
+                                Content="Встановлена"
+                                IsChecked="{Binding NewElectroCharge}" />
+
+                            <Button
+                                Grid.Row="5"
+                                Grid.Column="1"
+                                Width="70"
+                                Margin="2"
+                                HorizontalAlignment="Right"
+                                Command="{Binding AddCenter}"
+                                Content="Створити" />
+                        </Grid>
+
+                        <Grid Grid.Row="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Margin="2,30,2,2" Text="Заклади" />
+
+                            <Grid Grid.Row="1" DataContext="{Binding SevicesViewModel}">
+                                <Grid.Resources>
+                                    <CollectionViewSource x:Key="Services" Source="{Binding Services}" />
+                                </Grid.Resources>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="200" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <DataGrid
+                                    Margin="2"
+                                    AutoGenerateColumns="False"
+                                    CanUserAddRows="False"
+                                    ItemsSource="{Binding Services}">
+                                    <DataGrid.RowStyle>
+                                        <Style TargetType="DataGridRow">
+                                            <Setter Property="ContextMenu">
+                                                <Setter.Value>
+                                                    <ContextMenu>
+                                                        <MenuItem
+                                                            Command="{Binding Centers.SevicesViewModel.DeleteService, Source={StaticResource vm}}"
+                                                            CommandParameter="{Binding}"
+                                                            Header="Видалити" />
+                                                    </ContextMenu>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGrid.RowStyle>
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn
+                                            Width="Auto"
+                                            Binding="{Binding BrandName}"
+                                            Header="Назва" />
+                                        <DataGridTextColumn
+                                            Width="Auto"
+                                            Binding="{Binding Floor}"
+                                            Header="Поверх" />
+                                    </DataGrid.Columns>
+                                    <DataGrid.RowDetailsTemplate>
+                                        <DataTemplate>
+                                            <Grid MaxWidth="200">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+
+                                                <TextBox
+                                                    x:Name="desc2"
+                                                    Margin="2"
+                                                    IsReadOnly="{Binding IsChecked, ElementName=edit, Converter={StaticResource Inverse}}"
+                                                    Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    TextWrapping="Wrap">
+                                                    <TextBox.InputBindings>
+                                                        <KeyBinding
+                                                            Key="Return"
+                                                            Command="{Binding Data.SevicesViewModel.NewLine, Source={StaticResource proxy}}"
+                                                            CommandParameter="{Binding ElementName=desc2}" />
+                                                    </TextBox.InputBindings>
+                                                </TextBox>
+
+                                                <ToggleButton
+                                                    x:Name="edit"
+                                                    Grid.Row="1"
+                                                    Margin="2"
+                                                    HorizontalAlignment="Right"
+                                                    Content="Редагувати опис" />
+
+                                            </Grid>
+                                        </DataTemplate>
+                                    </DataGrid.RowDetailsTemplate>
+                                </DataGrid>
+
+                                <GridSplitter
+                                    Grid.Column="1"
+                                    Width="4"
+                                    HorizontalAlignment="Stretch"
+                                    Background="White"
+                                    ResizeDirection="Columns" />
+
+                                <Grid Grid.Column="2">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Margin="2" Text="Пошук" />
+
+                                        <TextBox
+                                            Grid.Column="1"
+                                            Margin="2"
+                                            Text="{Binding SearchStr, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    </Grid>
+
+                                    <Grid Grid.Row="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock
+                                            Grid.ColumnSpan="2"
+                                            Margin="2,30,2,2"
+                                            Text="Створення" />
+
+                                        <TextBlock
+                                            Grid.Row="1"
+                                            Margin="2"
+                                            HorizontalAlignment="Right"
+                                            Text="Назва" />
+                                        <TextBlock
+                                            Grid.Row="2"
+                                            Margin="2"
+                                            HorizontalAlignment="Right"
+                                            Text="Поверх" />
+                                        <TextBlock
+                                            Grid.Row="3"
+                                            Margin="2"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Text="Опис" />
+
+                                        <TextBox
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Margin="2"
+                                            Text="{Binding NewName, Mode=TwoWay}" />
+                                        <TextBox
+                                            Grid.Row="2"
+                                            Grid.Column="1"
+                                            Margin="2"
+                                            Text="{Binding NewFloor, Mode=TwoWay}" />
+                                        <TextBox
+                                            x:Name="desc"
+                                            Grid.Row="3"
+                                            Grid.Column="1"
+                                            Margin="2"
+                                            Text="{Binding NewDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            TextWrapping="Wrap">
+                                            <TextBox.InputBindings>
+                                                <KeyBinding
+                                                    Key="Return"
+                                                    Command="{Binding NewLine}"
+                                                    CommandParameter="{Binding ElementName=desc}" />
+                                            </TextBox.InputBindings>
+                                        </TextBox>
+
+                                        <Button
+                                            Grid.Row="5"
+                                            Grid.Column="1"
+                                            Width="70"
+                                            Margin="2"
+                                            HorizontalAlignment="Right"
+                                            Command="{Binding AddService}"
+                                            Content="Створити" />
+                                    </Grid>
+
+
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                </Grid>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

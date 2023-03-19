@@ -43,6 +43,8 @@ namespace DataBase.Model
 
         public virtual List<EntertainmentCenter> EntertainmentCenters { get; set; }
 
+        public override string ToString() => Name;
+
         #region PropertyChanged
 #nullable disable
         public event PropertyChangedEventHandler PropertyChanged;

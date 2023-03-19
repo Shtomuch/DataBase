@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace DataBase.Common
 {
-   public class ServicesRepository : IRepository<Services>
+   public class ServicesRepository : IRepository<Service>
     {
         public DBContext Context { get; init; }
 
         public ServicesRepository(DBContext context) => Context = context;
 
-        public void Create(Services Item)
+        public void Create(Service Item)
         {
             Context.Add(Item);
             Context.SaveChanges();
@@ -26,14 +26,14 @@ namespace DataBase.Common
             Context.SaveChanges();
         }
 
-        public Services GetItem(int id) => GetItems().SingleOrDefault(p => p.Id == id);
+        public Service GetItem(int id) => GetItems().SingleOrDefault(p => p.Id == id);
 
-        public IEnumerable<Services> GetItems()
+        public IEnumerable<Service> GetItems()
         {
             return Context.Service;
         }
 
-        public void Update(Services Item)
+        public void Update(Service Item)
         {
             Context.Update(Item);
             Context.SaveChanges();

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataBase.Common;
 
-internal class EntertainmentCenterRepository : IRepository<EntertainmentCenter>
+public class EntertainmentCenterRepository : IRepository<EntertainmentCenter>
 {
     public DBContext Context { get; init; }
 

@@ -14,13 +14,15 @@ namespace WPF.ViewModels
     {
         public DBContext Context { get; } = new();
 
-        public OwnerViewModel Owner { get; }
+        public OwnerViewModel Owners { get; }
+        public CentersViewModel Centers { get; }
 
         public MainViewModel()
         {
             Context.Database.Migrate();
 
-            Owner = new(Context);
+            Owners = new(Context);
+            Centers = new(Context);
         }
 
         #region PropertyChanged
