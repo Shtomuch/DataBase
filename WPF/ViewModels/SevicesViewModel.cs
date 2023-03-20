@@ -97,7 +97,7 @@ public class SevicesViewModel : INotifyPropertyChanged
     {
         if (string.IsNullOrWhiteSpace(NewName) || string.IsNullOrWhiteSpace(NewFloor) || !int.TryParse(NewFloor, out int floor) || string.IsNullOrWhiteSpace(NewDescription))
         {
-            MessageBox.Show("Жодне поле не має бути пустим", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show("Правильно заповніть поля. Примітка: жодне поле не має бути пустим", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 

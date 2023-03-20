@@ -134,7 +134,7 @@
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="2"
-                                Text="{Binding NewNumber, Mode=TwoWay}" />
+                                Text="{Binding NewPhone, Mode=TwoWay}" />
 
                             <Button
                                 Grid.Row="4"
@@ -152,7 +152,7 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Margin="2,30,2,2" Text="Центри, що належать обраному власнику" />
+                            <TextBlock Margin="2,30,2,2" Text="Центри, що обслуговує обраний менеджер" />
 
                             <ListView
                                 Grid.Row="1"

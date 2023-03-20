@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -21,7 +22,7 @@ public class OwnerViewModel : INotifyPropertyChanged
     private string searchStr = "";
     private string newName;
     private string newSurname;
-    private string newNumber;
+    private string newPhone;
     private Owner selected;
 
     public ObservableCollection<Owner> Owners => new(owners.Where(o => o.Name.Contains(SearchStr) || o.Surname.Contains(SearchStr) || o.Number.Contains(SearchStr)));
@@ -58,12 +59,29 @@ public class OwnerViewModel : INotifyPropertyChanged
         }
     }
 
-    public string NewNumber
+    public string NewPhone
     {
-        get => newNumber;
+        get => newPhone;
         set
         {
-            newNumber = value;
+            value = value.TrimStart();
+
+            if (newPhone?.Length > value.Length)
+            {
+                newPhone = value.Trim(" -".ToCharArray());
+                OnPropertyChanged();
+                return;
+            }
+
+            if (Regex.IsMatch(value, @"\d+ \d+ \d{4}") || Regex.IsMatch(value, @"\d+ \d+ \d{3}-\d{3}"))
+                value = $"{value[..^1]}-{value.Last()}";
+            else if (Regex.IsMatch(value, @"\d+ \d+ \d{3}[^0-9]$") || Regex.IsMatch(value, @"\d+ \d+ \d{3}-\d{2}[^0-9]$"))
+                value = value.Trim();
+            else if (Regex.IsMatch(value, @"\d+ \d+ \d{3}-\d{2}-\d{2}.+"))
+                value = Regex.Match(value, @"\d+ \d+ \d{3}-\d{2}-\d{2}").Value;
+
+            newPhone = value;
+
             OnPropertyChanged();
         }
     }
@@ -96,6 +114,12 @@ public class OwnerViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(Owners));
             return;
         }
+        if (!Regex.IsMatch((sender as Owner).Number, @"\d+ \d+ \d{3}-\d{2}-\d{2}"))
+        {
+            MessageBox.Show("Невірно введений номер", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
+            OnPropertyChanged(nameof(Owners));
+            return;
+        }
 
         ownerRepository.Update(sender as Owner);
     }
@@ -104,13 +128,19 @@ public class OwnerViewModel : INotifyPropertyChanged
 
     private void AddOwnerExecute(object obj)
     {
-        if (string.IsNullOrWhiteSpace(NewName) || string.IsNullOrWhiteSpace(NewSurname) || string.IsNullOrWhiteSpace(NewNumber))
+        if (string.IsNullOrWhiteSpace(NewName) || string.IsNullOrWhiteSpace(NewSurname) || string.IsNullOrWhiteSpace(NewPhone))
         {
             MessageBox.Show("Жодне поле не має бути пустим", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
+        if (!Regex.IsMatch(NewPhone, @"\d+ \d+ \d{3}-\d{2}-\d{2}"))
+        {
+            MessageBox.Show("Невірно введений номер", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
+            OnPropertyChanged(nameof(Owners));
+            return;
+        }
 
-        ownerRepository.Create(new Owner() { Name = NewName, Surname = NewSurname, Number = NewNumber });
+        ownerRepository.Create(new Owner() { Name = NewName, Surname = NewSurname, Number = NewPhone });
         owners = ownerRepository.GetItems();
         foreach (var item in owners)
             item.PropertyChanged += Owner_PropertyChanged;
@@ -118,7 +148,7 @@ public class OwnerViewModel : INotifyPropertyChanged
 
         NewName = "";
         NewSurname = "";
-        NewNumber = "";
+        NewPhone = "";
     }
 
     public ICommand DeleteOwner => new RelayCommand(DeleteOwnerExecute);
